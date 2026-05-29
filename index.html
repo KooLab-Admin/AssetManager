@@ -13,14 +13,51 @@
   --green:#3ecf8e; --orange:#f59e0b; --red:#ef4444; --purple:#a78bfa;
   --text:#e2e8f0; --text2:#8892a4; --text3:#4a5568;
 }
+
+body.light-mode {
+  --bg:#f8f9fa; --surface:#ffffff; --surface2:#f1f3f5; --surface3:#e9ecef;
+  --border:#dee2e6; --border2:#ced4da;
+  --accent:#3366ff; --accent2:#6633ff;
+  --text:#212529; --text2:#495057; --text3:#868e96;
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'IBM Plex Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;}
+body{font-family:'IBM Plex Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;transition: background 0.3s, color 0.3s;}
 
 /* HEADER */
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100; transition: background 0.3s, border-color 0.3s;}
 .logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;}
 .logo-icon{width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;}
 .header-right{display:flex;align-items:center;gap:10px;}
+
+/* THEME TOGGLE */
+.theme-toggle {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 48px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+}
+.theme-toggle-dot {
+  width: 18px;
+  height: 18px;
+  background: var(--text);
+  border-radius: 50%;
+  transition: transform 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+body.light-mode .theme-toggle-dot {
+  transform: translateX(24px);
+}
 .hpill{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:3px 10px;font-size:11px;color:var(--text2);font-family:'IBM Plex Mono',monospace;}
 .hpill b{color:var(--accent);}
 .hpill.green b{color:var(--green);}
@@ -196,6 +233,9 @@ select option{background:var(--surface2);}
     Koo Lab 자산관리
   </div>
   <div class="header-right">
+    <div class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
+      <div class="theme-toggle-dot" id="theme-icon">🌙</div>
+    </div>
     <div class="hpill">전체 <b id="h-total">0</b></div>
     <div class="hpill green">정상 <b id="h-ok">0</b></div>
     <div class="hpill orange">수리/점검 <b id="h-rep">0</b></div>
@@ -445,6 +485,24 @@ let editingId = null, deletingId = null;
 let currentView = 'grid';
 let sideStatus = '', sideCat = '', sideLoc = '';
 let selFile = null, selImgData = null;
+
+// ============================================================
+//  THEME TOGGLE
+// ============================================================
+function toggleTheme() {
+  const body = document.body;
+  const icon = document.getElementById('theme-icon');
+  body.classList.toggle('light-mode');
+  const isLight = body.classList.contains('light-mode');
+  icon.textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('koolab-theme', isLight ? 'light' : 'dark');
+}
+
+// 초기 테마 설정
+if (localStorage.getItem('koolab-theme') === 'light') {
+  document.body.classList.add('light-mode');
+  document.getElementById('theme-icon').textContent = '☀️';
+}
 
 // ============================================================
 //  FILTERS
